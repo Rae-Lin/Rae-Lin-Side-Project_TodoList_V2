@@ -112,12 +112,6 @@ export default {
       this.todolist.splice(index, 1, data);
       this.closeEdit();
     },
-    // noLink(event, link) {
-    //   if (link === '') {
-    //     console.log('nolink');
-    //     return false;
-    //   }
-    // },
   },
   computed: {
     // Tab分類的清單

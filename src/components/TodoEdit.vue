@@ -55,7 +55,6 @@ export default {
     return {
       // 輸入的值
       newTodo: {
-        // id: Math.floor(Date.now()),
         id: 0,
         title: "",
         date: "",
@@ -73,33 +72,39 @@ export default {
   methods: {
     checkType() {
       if (this.todoItem.title === "") return alert("請輸入標題");
-      let isCheck = this.todoItem.id === 0;
-      isCheck ? this.addTodo() : this.updateTodo();
+      !this.todoItem.id ? this.addTodo() : this.updateTodo();
     },
     addTodo() {
-      console.log("add");
       // 獲取輸入的值 給到新的物件(newTodoAdd)傳回App (直接給this.newTodo會被清空title)
+      // this.newTodo.id = !this.newTodo.id ? 0 : this.todoListLength;
       this.newTodo.id = this.todoListLength;
       this.newTodoAdd = { ...this.newTodo };
       this.$emit("add-todo", this.newTodoAdd);
-      this.newTodo = {
-        id: 0,
-        title: "",
-        date: "",
-        link: "",
-        memo: "",
-        completed: false,
-        pinned: false,
-      };
+      this.defaultTodo();
+      // this.newTodo = {
+      //   id: 0,
+      //   title: "",
+      //   date: "",
+      //   link: "",
+      //   memo: "",
+      //   completed: false,
+      //   pinned: false,
+      // };
     },
     updateTodo() {
-      console.log("update:" + this.todoItem.id);
-      this.editTodoAdd = { ...this.editTodo };
-      this.$emit("edit-todo", this.editTodoAdd);
+      this.$emit("edit-todo", this.editTodo);
     },
     cancelTodo() {
       this.newTodo.title = "";
       this.$emit("close-edit");
+    },
+    defaultTodo() {
+      Object.keys(this.newTodo).forEach((key) => {
+        if (typeof this.newTodo[key] !== "boolean") {
+          this.newTodo[key] = "";
+        }
+      });
+      this.newTodo["id"] = 0;
     },
   },
   computed: {
@@ -108,7 +113,8 @@ export default {
       return this.item ? this.editTodo : this.newTodo;
     },
     todoListLength() {
-      return this.todolist.length;
+      return Math.max(...this.todolist.map((val) => val.id)) + 1;
+      // return this.todolist.length;
     },
   },
   mounted() {
