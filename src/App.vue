@@ -2,15 +2,20 @@
   <div id="app" class="card">
     <!-- Tab標籤 -->
     <ul class="card-head">
-      <li :class="{ active: visibility == 'all' }" @click="visibility = 'all'">好想買</li>
+      <li :class="{ active: visibility == 'all' }" @click="changeTab('all')">
+        好想買
+      </li>
       <li
         :class="{ active: visibility == 'active' }"
-        @click="visibility = 'active'"
-      >還沒買</li>
+        @click="changeTab('active')"
+      >
+        還沒買
+      </li>
       <li
         :class="{ active: visibility == 'completed' }"
-        @click="visibility = 'completed'"
-      >買到啦<img src="./assets/images/icon_star.png" />
+        @click="changeTab('completed')"
+      >
+        買到啦<img src="./assets/images/icon_star.png" />
       </li>
     </ul>
 
@@ -30,9 +35,8 @@
         :todolist="todos"
       >
       </todo-edit>
-
-      <!-- 任務表 list -->
-      <todo-item :todolist="todos" :visibility="visibility"></todo-item>
+        <!-- 任務表 list -->
+        <todo-item :todolist="todos" :visibility="visibility"></todo-item>
       <p class="total">已經買了 : {{ completedTodos }} / {{ todos.length }}</p>
     </div>
   </div>
@@ -75,10 +79,14 @@ export default {
   methods: {
     closeEdit() {
       this.isAddTodoShow = !this.isAddTodoShow;
+      console.log(this.isAddTodoShow);
     },
     addTodo(data) {
       this.todos.push(data);
-      this.closeEdit();
+    },
+    changeTab(tabName) {
+      this.isAddTodoShow = false;
+      this.visibility = tabName;
     },
   },
 };
@@ -198,7 +206,7 @@ export default {
     }
     .todo-lists {
       order: 4;
-      li{
+      li {
         margin-bottom: 10px;
       }
     }

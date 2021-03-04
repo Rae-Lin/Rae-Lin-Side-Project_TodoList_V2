@@ -4,7 +4,7 @@
       <input
         type="text"
         placeholder="標題"
-        v-model.trim="todoItem.title"
+        v-model.trim="newTodo.title"
         @keyup.enter="checkType"
       />
     </div>
@@ -14,17 +14,17 @@
           <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
           參考連結
         </span>
-        <input type="url" v-model="todoItem.link" />
+        <input type="url" v-model="newTodo.link" />
       </p>
       <p class="title">
         <span> <font-awesome-icon :icon="['fas', 'user-edit']" /> 備註 </span>
-        <textarea placeholder="做點筆記吧" v-model="todoItem.memo"></textarea>
+        <textarea placeholder="做點筆記吧" v-model="newTodo.memo"></textarea>
       </p>
       <p class="title">
         <span>
           <font-awesome-icon :icon="['far', 'calendar-check']" /> 購買日期
         </span>
-        <input type="date" v-model="todoItem.date" />
+        <input type="date" v-model="newTodo.date" />
       </p>
     </div>
     <div class="todo-item-footer">
@@ -36,12 +36,21 @@
 
 <script>
 export default {
-  name: "todoEdit",
+  name: "TodoEdit",
   props: {
     item: {
       type: Object,
       default() {
-        return undefined;
+        return {
+          id: 0,
+          title: "",
+          date: "",
+          link: "",
+          memo: "",
+          img: "",
+          completed: false,
+          pinned: false,
+        }
       },
     },
     todolist: {
@@ -53,43 +62,35 @@ export default {
   },
   data() {
     return {
-      newTodo: {      // 新增的值
-        id: 0,
-        title: "",
-        date: "",
-        link: "",
-        memo: "",
-        completed: false,
-        pinned: false,
-      },
-      editTodo: {},   // 編輯的值
+      newTodo: {},    // 新增的值
       newTodoAdd: {}, // 要傳回App新增的物件
     };
   },
   methods: {
+    closeEdit() {
+      this.$emit("close-edit");
+    },
     cancleEdit(){
       this.defaultTodo();
       this.closeEdit();
     },
-    closeEdit() {
-      this.$emit("close-edit");
-    },
     checkType() {
-      if (this.todoItem.title === "") return alert("請輸入標題");
-      !this.todoItem.id ? this.addTodo() : this.updateTodo();
-      this.closeEdit();
+      if (!this.newTodo.title) return alert("請輸入標題");
+      !this.newTodo.id ? this.addTodo() : this.updateTodo();
     },
     addTodo() {
-      // 獲取輸入的值 給到新的物件(newTodoAdd)傳回App (直接給this.newTodo會被清空title)
       this.newTodo.id = this.todoListLength;
       if(this.newTodo.date) this.newTodo.completed = true; // 若有給日期, 表示買完了
+
+      // 獲取輸入的值 給到新的物件(newTodoAdd)傳回App (直接給this.newTodo會被清空title)
       this.newTodoAdd = { ...this.newTodo };
-      this.$emit("add-todo", this.newTodo);
-      this.defaultTodo();
+      this.$emit("add-todo", this.newTodoAdd);
+      this.cancleEdit();
     },
     updateTodo() {
-      if(this.editTodo.date) this.editTodo.completed = true;
-      this.$emit("edit-todo", this.editTodo);
+      if(this.newTodo.date) this.newTodo.completed = true;
+      this.$emit("edit-todo", this.newTodo);
+      this.closeEdit();
     },
     defaultTodo() {
       // 給回預設值
@@ -102,10 +103,6 @@ export default {
     },
   },
   computed: {
-    todoItem() {
-      // 若回傳進來有值就是edit, 若沒有就是new
-      return this.item ? this.editTodo : this.newTodo;
-    },
     todoListLength() {
       // 因為會增刪, 不用this.todolist.length去抓
       // return this.todolist.length;
@@ -113,8 +110,8 @@ export default {
       return !this.todolist.length ? 1 : max;
     },
   },
-  mounted() {
-    this.editTodo = { ...this.item };
+   mounted() {
+    this.newTodo = { ...this.item };
   },
 };
 </script>
@@ -145,14 +142,14 @@ export default {
   margin: 0 auto;
   .title {
     margin: 0px 0 18px;
-    color: #007188;
+    color:  map-get($theme-colors, primary-darkgreen);
     span {
       display: block;
       margin-bottom: 5px;
       font-weight: 600;
     }
     svg {
-      color: #007188;
+      color:  map-get($theme-colors, primary-darkgreen);
       font-size: 0.9rem;
       padding-bottom: 0.05rem;
     }
