@@ -1,31 +1,27 @@
 <template>
-  <ul class="todo-lists">
-    <li
+  <!-- <ul class="todo-lists"> -->
+    <!-- <li
       v-for="item in sortTodos"
       :key="item.id"
       :class="{ 'todo-item-pinned': item.pinned }"
-    >
+    > -->
+    <li :class="{ 'todo-item-pinned': item.pinned }">
       <!-- 每個item的資料 -->
       <div class="todo-lists-item" v-if="item.id !== isOpenEdit">
         <div class="todo-item-title">
           <p class="input-title">
             <input type="checkbox" v-model="item.completed" :id="item.id" />
-            <label :for="item.id" :class="{ completed: item.completed }">{{
-              item.title
-            }}</label>
+            <label :for="item.id" :class="{ completed: item.completed }">{{ item.title }}</label>
           </p>
           <p>
             <span>
-              <!-- <a :href="item.link" target="_blank" @click="noLink($event, item.link)"> -->
               <a
                 target="_blank"
                 :href="item.link"
-                :class="{ linkDisabled: item.link === '' }"
-              >
+                :class="{ linkDisabled: item.link === '' }">
                 <font-awesome-icon
                   :icon="['fas', 'external-link-square-alt']"
-                  :class="{ '-active': item.link }"
-                />
+                  :class="{ '-active': item.link }"/>
               </a>
             </span>
             <span class="icon" @click="openEdit(item.id)">
@@ -41,14 +37,8 @@
           </p>
         </div>
         <div class="todo-lists-detail">
-          <p>
-            <font-awesome-icon :icon="['fas', 'user-edit']" /> {{ item.memo }}
-          </p>
-          <p>
-            <font-awesome-icon :icon="['far', 'calendar-check']" />{{
-              item.date
-            }}
-          </p>
+          <p><font-awesome-icon :icon="['fas', 'user-edit']" /> {{ item.memo }}</p>
+          <p><font-awesome-icon :icon="['far', 'calendar-check']" />{{ item.date }}</p>
         </div>
       </div>
       <!-- item的編輯框 -->
@@ -59,7 +49,7 @@
         @edit-todo="updateTodo"
       ></todo-edit>
     </li>
-  </ul>
+  <!-- </ul> -->
 </template>
 
 <script>
@@ -70,6 +60,12 @@ export default {
   components: { TodoEdit },
   // props: ["todolist", "visibility"],
   props: {
+    item: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
     todolist: {
       type: Array,
       default() {
@@ -115,29 +111,29 @@ export default {
       this.closeEdit();
     },
   },
-  computed: {
-    // Tab分類的清單
-    filteredTodos() {
-      let status = null;
-      switch (this.visibility) {
-        case "all":
-          return this.todolist;
-        case "active":
-          status = false;
-          break;
-        case "completed":
-          status = true;
-          break;
-      }
-      return this.todolist.filter((item) => item.completed === status);
-    },
-    // 加到最愛之清單
-    sortTodos() {
-      return this.filteredTodos.sort((itemA, itemB) => {
-        return Number(itemA.pinned) > Number(itemB.pinned) ? -1 : 1;
-      });
-    },
-  },
+  // computed: {
+  //   // Tab分類的清單
+  //   filteredTodos() {
+  //     let status = null;
+  //     switch (this.visibility) {
+  //       case "all":
+  //         return this.todolist;
+  //       case "active":
+  //         status = false;
+  //         break;
+  //       case "completed":
+  //         status = true;
+  //         break;
+  //     }
+  //     return this.todolist.filter((item) => item.completed === status);
+  //   },
+  //   // 加到最愛之清單
+  //   sortTodos() {
+  //     return this.filteredTodos.sort((itemA, itemB) => {
+  //       return Number(itemA.pinned) > Number(itemB.pinned) ? -1 : 1;
+  //     });
+  //   },
+  // },
 };
 </script>
 

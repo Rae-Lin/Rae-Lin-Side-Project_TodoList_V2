@@ -35,8 +35,11 @@
         :todolist="todos"
       >
       </todo-edit>
-        <!-- 任務表 list -->
-        <todo-item :todolist="todos" :visibility="visibility"></todo-item>
+      <!-- 任務表 list -->
+      <ul class="todo-lists">
+        <todo-item v-for="item in sortTodos" :key="item.id" :item="item"
+        :todolist="todos" :visibility="visibility"></todo-item>
+      </ul>
       <p class="total">已經買了 : {{ completedTodos }} / {{ todos.length }}</p>
     </div>
   </div>
@@ -75,11 +78,31 @@ export default {
     completedTodos() {
       return this.todos.filter((item) => item.completed).length;
     },
+    // Tab分類的清單
+    filteredTodos() {
+      let status = null;
+      switch (this.visibility) {
+        case "all":
+          return this.todos;
+        case "active":
+          status = false;
+          break;
+        case "completed":
+          status = true;
+          break;
+      }
+      return this.todos.filter((item) => item.completed === status);
+    },
+    // 加到最愛之清單
+    sortTodos() {
+      return this.filteredTodos.sort((itemA, itemB) => {
+        return Number(itemA.pinned) > Number(itemB.pinned) ? -1 : 1;
+      });
+    },
   },
   methods: {
     closeEdit() {
       this.isAddTodoShow = !this.isAddTodoShow;
-      console.log(this.isAddTodoShow);
     },
     addTodo(data) {
       this.todos.push(data);
