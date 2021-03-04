@@ -52,15 +52,15 @@ export default {
     return {
       newTodo: {},
       todos: [
-        {
-          id: -1,
-          title: "Udemy 六角課程",
-          date: "2020-05-04",
-          link: "https://www.udemy.com/course/hexschoolcolumn/",
-          memo: "Bobo 推薦",
-          completed: false,
-          pinned: false,
-        },
+        // {
+        //   id: 0,
+        //   title: "Udemy 六角課程",
+        //   date: "2020-05-04",
+        //   link: "https://www.udemy.com/course/hexschoolcolumn/",
+        //   memo: "Bobo 推薦",
+        //   completed: true,
+        //   pinned: false,
+        // },
       ],
       isAddTodoShow: false,
       visibility: "all",

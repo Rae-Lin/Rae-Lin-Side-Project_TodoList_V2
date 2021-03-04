@@ -3,28 +3,23 @@
     <li
       v-for="item in sortTodos"
       :key="item.id"
-      :class="{ 'todo-item-pinned': item.pinned }"
-    >
+      :class="{ 'todo-item-pinned': item.pinned }">
       <!-- 每個item的資料 -->
       <div class="todo-lists-item" v-if="item.id !== isOpenEdit">
         <div class="todo-item-title">
           <p class="input-title">
             <input type="checkbox" v-model="item.completed" :id="item.id" />
-            <label :for="item.id" :class="{ completed: item.completed }">{{
-              item.title
-            }}</label>
+            <label :for="item.id" :class="{ completed: item.completed }">{{ item.title }}</label>
           </p>
           <p>
             <span>
               <!-- <a :href="item.link" target="_blank" @click="noLink($event, item.link)"> -->
               <a target="_blank"
                 :href="item.link"
-                :class="{ linkDisabled: (item.link === '') }"
-              >
+                :class="{ linkDisabled: (item.link === '') }">
                 <font-awesome-icon
                   :icon="['fas', 'external-link-square-alt']"
-                  :class="{ '-active': item.link }"
-                />
+                  :class="{ '-active': item.link }"/>
               </a>
             </span>
             <span class="icon" @click="openEdit(item.id)">
@@ -40,20 +35,15 @@
           </p>
         </div>
         <div class="todo-lists-detail">
-          <p>
-            <font-awesome-icon :icon="['fas', 'user-edit']" /> {{ item.memo }}
-          </p>
-          <p>
-            <font-awesome-icon :icon="['far', 'calendar-check']" />
-            {{ item.date }}
-          </p>
+          <p><font-awesome-icon :icon="['fas', 'user-edit']" /> {{ item.memo }}</p>
+          <p><font-awesome-icon :icon="['far', 'calendar-check']" />{{ item.date }}</p>
         </div>
       </div>
       <!-- item的編輯框 -->
       <todo-edit
         v-else
-        @close-edit="closeEdit"
         :item="item"
+        @close-edit="closeEdit"
         @edit-todo="updateTodo"
       ></todo-edit>
     </li>

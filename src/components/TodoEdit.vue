@@ -28,7 +28,7 @@
       </p>
     </div>
     <div class="todo-item-footer">
-      <button class="cancel" @click="cancelTodo">取消</button>
+      <button class="cancel" @click="cancleEdit">取消</button>
       <button class="add" @click="checkType">加入我的待購清單!</button>
     </div>
   </div>
@@ -53,8 +53,7 @@ export default {
   },
   data() {
     return {
-      // 輸入的值
-      newTodo: {
+      newTodo: {      // 新增的值
         id: 0,
         title: "",
         date: "",
@@ -63,42 +62,37 @@ export default {
         completed: false,
         pinned: false,
       },
-      editTodo: {},
-      // 要傳回App新增的物件
-      newTodoAdd: {},
-      editTodoAdd: {},
+      editTodo: {},   // 編輯的值
+      newTodoAdd: {}, // 要傳回App新增的物件
     };
   },
   methods: {
+    cancleEdit(){
+      this.defaultTodo();
+      this.closeEdit();
+    },
+    closeEdit() {
+      this.$emit("close-edit");
+    },
     checkType() {
       if (this.todoItem.title === "") return alert("請輸入標題");
       !this.todoItem.id ? this.addTodo() : this.updateTodo();
+      this.closeEdit();
     },
     addTodo() {
       // 獲取輸入的值 給到新的物件(newTodoAdd)傳回App (直接給this.newTodo會被清空title)
-      // this.newTodo.id = !this.newTodo.id ? 0 : this.todoListLength;
       this.newTodo.id = this.todoListLength;
+      if(this.newTodo.date) this.newTodo.completed = true; // 若有給日期, 表示買完了
       this.newTodoAdd = { ...this.newTodo };
-      this.$emit("add-todo", this.newTodoAdd);
+      this.$emit("add-todo", this.newTodo);
       this.defaultTodo();
-      // this.newTodo = {
-      //   id: 0,
-      //   title: "",
-      //   date: "",
-      //   link: "",
-      //   memo: "",
-      //   completed: false,
-      //   pinned: false,
-      // };
     },
     updateTodo() {
+      if(this.editTodo.date) this.editTodo.completed = true;
       this.$emit("edit-todo", this.editTodo);
     },
-    cancelTodo() {
-      this.newTodo.title = "";
-      this.$emit("close-edit");
-    },
     defaultTodo() {
+      // 給回預設值
       Object.keys(this.newTodo).forEach((key) => {
         if (typeof this.newTodo[key] !== "boolean") {
           this.newTodo[key] = "";
@@ -109,12 +103,14 @@ export default {
   },
   computed: {
     todoItem() {
-      // 若回傳進來有值就是update, 若沒有就是new
+      // 若回傳進來有值就是edit, 若沒有就是new
       return this.item ? this.editTodo : this.newTodo;
     },
     todoListLength() {
-      return Math.max(...this.todolist.map((val) => val.id)) + 1;
+      // 因為會增刪, 不用this.todolist.length去抓
       // return this.todolist.length;
+      let max = Math.max(...this.todolist.map((val) => val.id)) + 1;
+      return !this.todolist.length ? 1 : max;
     },
   },
   mounted() {
